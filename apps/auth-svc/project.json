@@ -1,0 +1,24 @@
+{
+  "name": "auth-svc",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/auth-svc/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "auth-svc:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "auth-svc:build:development"
+        },
+        "production": {
+          "buildTarget": "auth-svc:build:production"
+        }
+      }
+    }
+  }
+}

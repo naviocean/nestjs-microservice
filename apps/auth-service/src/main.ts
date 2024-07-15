@@ -4,6 +4,7 @@
  */
 
 import { Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app/app.module';
@@ -25,9 +26,10 @@ async function bootstrap() {
     jsonDocumentUrl: 'swagger/json',
   });
 
-  const port = process.env.PORT || 3000;
+  const configService = app.get<ConfigService>(ConfigService);
+  const port = configService.get<number>('port');
   await app.listen(port);
-  Logger.log(`🚀 Application is running on: http://localhost:${port}`);
+  Logger.log(`🚀 Application is running on: http://localhost:${port}/`);
 }
 
 bootstrap();

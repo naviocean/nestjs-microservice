@@ -1,37 +1,38 @@
 import { LoginDto } from '@nestjs-microservice/dto';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-
+import { compare } from 'bcrypt';
+import { UserService } from '../user/user.service';
 @Injectable()
 export class AuthService {
-  private readonly users = [
-    {
-      id: 1,
-      username: 'admin',
-      password: 'password',
-    },
-    {
-      id: 2,
-      username: 'bim',
-      passworld: '123456',
-    },
-  ];
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private jwtService: JwtService,
+    private readonly userService: UserService
+  ) {}
 
-  validateUser({ username, password }: LoginDto): {
+  async validateUser(loginDto: LoginDto): Promise<{
     access_token: string;
-  } {
-    const findUser = this.users.find(
-      (user) => user.username === username && user.password === password
-    );
-    if (findUser) {
-      // Destructure the password
-      const { password, ...data } = findUser;
+  }> {
+    const findUser = await this.userService.user({
+      username: loginDto.username,
+    });
 
-      return {
-        access_token: this.jwtService.sign(data),
-      };
+    if (!findUser) {
+      throw new UnauthorizedException(`No user found: ${loginDto.username}`);
     }
-    return null;
+
+    const isPasswordMatched = await compare(
+      loginDto.password,
+      findUser.password
+    );
+
+    if (!isPasswordMatched) {
+      throw new UnauthorizedException(`Invalid password`);
+    }
+
+    const { password, ...data } = findUser;
+    return {
+      access_token: await this.jwtService.signAsync(data),
+    };
   }
 }

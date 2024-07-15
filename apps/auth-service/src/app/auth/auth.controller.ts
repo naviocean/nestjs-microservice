@@ -1,15 +1,13 @@
 import { LoginDto } from '@nestjs-microservice/dto';
 import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthService } from './auth.service';
-import { JwtAuthGuard } from './guards/jwt.guard';
+import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Role } from '@prisma/client';
+import { Auth } from './decorators/auth.decorator';
 import { LocalAuthGuard } from './guards/local.guard';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
-
   @Post('login')
   @UseGuards(LocalAuthGuard)
   @ApiBody({ type: LoginDto })
@@ -24,13 +22,7 @@ export class AuthController {
   }
 
   @Get('status')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiResponse({
-    status: 200,
-    description: 'Get status successfully.',
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @Auth({ roles: [Role.ADMIN], description: 'Get status successfully' })
   status(@Request() req) {
     console.log('Inside AuthController status method');
     return req.user;

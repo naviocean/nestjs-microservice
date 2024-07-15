@@ -15,7 +15,14 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@nestjs-microservice/dto": ["packages/dto/src/index.ts"]
+      "@nestjs-microservice/dto": ["packages/dto/src/index.ts"],
+      "@nestjs-microservice/prisma-client": [
+        "packages/prisma-client/src/index.ts"
+      ],
+      "@nestjs-microservice/prisma-schema": [
+        "packages/prisma-schema/src/index.ts"
+      ],
+      "@nestjs-microservice/proto": ["packages/proto/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
