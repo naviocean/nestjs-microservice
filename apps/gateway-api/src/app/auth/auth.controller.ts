@@ -1,4 +1,4 @@
-import { PostLoginDto } from '@nestjs-microservice/proto';
+import { LoginDto } from '@nestjs-microservice/dto';
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
@@ -6,7 +6,11 @@ import { AuthService } from './auth.service';
 export class AuthController {
   constructor(private authService: AuthService) {}
   @Post('login')
-  login(@Body() postLoginDto: PostLoginDto) {
-    return this.authService.postLogin(postLoginDto);
+  login(@Body() loginDto: LoginDto) {
+    try {
+      return this.authService.postLogin(loginDto);
+    } catch (error) {
+      console.log('zzzzz', error);
+    }
   }
 }
