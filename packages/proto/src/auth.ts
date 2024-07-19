@@ -10,30 +10,54 @@ import { Observable } from "rxjs";
 
 export const protobufPackage = "auth";
 
-export interface PostLoginDto {
+export interface PostLoginDTO {
   username: string;
   password: string;
 }
 
-export interface ResponseLogin {
+export interface ResponseLoginDTO {
   id: number;
   username: string;
   role: string;
 }
 
+export interface PostRtHashDTO {
+  username: string;
+  hashedRT: string;
+}
+
+export interface GetRtHashDTO {
+  username: string;
+}
+
+export interface ResponseRtHashDTO {
+  hashedRT: string;
+}
+
+export interface Empty {
+}
+
 export const AUTH_PACKAGE_NAME = "auth";
 
 export interface AuthServiceClient {
-  postLogin(request: PostLoginDto): Observable<ResponseLogin>;
+  postLogin(request: PostLoginDTO): Observable<ResponseLoginDTO>;
+
+  postRtHash(request: PostRtHashDTO): Observable<Empty>;
+
+  getRtHash(request: GetRtHashDTO): Observable<ResponseRtHashDTO>;
 }
 
 export interface AuthServiceController {
-  postLogin(request: PostLoginDto): Promise<ResponseLogin> | Observable<ResponseLogin> | ResponseLogin;
+  postLogin(request: PostLoginDTO): Promise<ResponseLoginDTO> | Observable<ResponseLoginDTO> | ResponseLoginDTO;
+
+  postRtHash(request: PostRtHashDTO): Promise<Empty> | Observable<Empty> | Empty;
+
+  getRtHash(request: GetRtHashDTO): Promise<ResponseRtHashDTO> | Observable<ResponseRtHashDTO> | ResponseRtHashDTO;
 }
 
 export function AuthServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["postLogin"];
+    const grpcMethods: string[] = ["postLogin", "postRtHash", "getRtHash"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("AuthService", method)(constructor.prototype[method], method, descriptor);

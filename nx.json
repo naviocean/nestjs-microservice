@@ -39,7 +39,6 @@
       },
       "exclude": [
         "apps/gateway-api-e2e/**/*",
-        "apps/auth-service-e2e/**/*",
         "apps/users-svc-e2e/**/*",
         "apps/auth-svc-e2e/**/*"
       ]

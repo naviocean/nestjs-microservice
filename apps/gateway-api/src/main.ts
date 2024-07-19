@@ -9,6 +9,7 @@ import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app/app.module';
 import { GrpcExceptionFilter } from './filters/grpc-exception.filter';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,6 +19,19 @@ async function bootstrap() {
     })
   );
   app.useGlobalFilters(new GrpcExceptionFilter());
+
+  const config = new DocumentBuilder()
+    .setTitle('Authentication')
+    .setDescription('The Auth API description')
+    .setVersion('1.0')
+    .addTag('auth')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('docs', app, document, {
+    jsonDocumentUrl: 'swagger/json',
+  });
+
   // const globalPrefix = 'api';
   // app.setGlobalPrefix(globalPrefix);
   const configService = app.get<ConfigService>(ConfigService);

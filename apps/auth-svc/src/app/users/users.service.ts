@@ -10,4 +10,15 @@ export class UsersService {
       where: userWhereUniqueInput,
     });
   }
+
+  async updateUser(options: {
+    where: Prisma.UserWhereUniqueInput;
+    data: Prisma.UserUpdateInput;
+  }) {
+    const { where, data } = options;
+    return this.prisma.user.update({
+      data,
+      where,
+    });
+  }
 }
