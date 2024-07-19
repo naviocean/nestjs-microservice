@@ -1,4 +1,4 @@
-import { RefreshDTO } from '@nestjs-microservice/dto';
+import { RefreshDTO, ReponseLoginDTO } from '@nestjs-microservice/dto';
 import {
   AUTH_PACKAGE_NAME,
   AUTH_SERVICE_NAME,
@@ -17,7 +17,6 @@ import { JwtService } from '@nestjs/jwt';
 import { ClientGrpc } from '@nestjs/microservices';
 import { compare, hash } from 'bcrypt';
 import { lastValueFrom } from 'rxjs';
-import { Tokens } from './interfaces/auth.interfaces';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -33,7 +32,7 @@ export class AuthService implements OnModuleInit {
       this.clientGrpc.getService<AuthServiceClient>(AUTH_SERVICE_NAME);
   }
 
-  async postLogin(postLoginDTO: PostLoginDTO) {
+  async postLogin(postLoginDTO: PostLoginDTO): Promise<ReponseLoginDTO> {
     const user: ResponseLoginDTO = await lastValueFrom(
       this.authServiceClient.postLogin(postLoginDTO)
     );
@@ -41,7 +40,7 @@ export class AuthService implements OnModuleInit {
     return await this.getTokens(user);
   }
 
-  async refreshToken(refreshDTO: RefreshDTO): Promise<Tokens> {
+  async refreshToken(refreshDTO: RefreshDTO): Promise<ReponseLoginDTO> {
     const decoded = await this.jwtService.verifyAsync(
       refreshDTO.refresh_token,
       {
@@ -65,7 +64,7 @@ export class AuthService implements OnModuleInit {
     return await this.getTokens(data);
   }
 
-  async getTokens(data: ResponseLoginDTO): Promise<Tokens> {
+  async getTokens(data: ResponseLoginDTO): Promise<ReponseLoginDTO> {
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(
         {
